@@ -1,63 +1,55 @@
-const apiKey = '786f43eb470747904b392cc38a0feff7';
-const cityForm = document.getElementById('city-form');
-const cityInput = document.getElementById('city-input');
-const currentWeatherSection = document.getElementById('current-weather');
-const forecastSection = document.getElementById('forecast');
-const searchHistorySection = document.getElementById('search-history');
+var apiKey="786f43eb470747904b392cc38a0feff7"
+var titleEl=document.getElementById("title")
+var tempEl=document.getElementById("temp")
+var windEl=document.getElementById("wind")
+var humidityEl=document.getElementById("humidity")
+var searchBtn=document.getElementById("search-btn")
+var cityInput=document.getElementById("city-input")
+var fivedayForcastEl= document.getElementById("fiveday-forcast")
 
-// Function to fetch weather data from OpenWeatherMap API
-async function getWeatherData(city) {
-  const response = await fetch(
-    `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${apiKey}`
-  );
-  const data = await response.json();
-  return data;
+
+function searchCity(){
+    var cityName=cityInput.value
+
+    displayWeather(cityName)
 }
 
-// Function to display current weather data
-function displayCurrentWeather(data) {
-  // Display the city name, date, weather icon, temperature, humidity, and wind speed
+function displayWeather(cityName){
+    var url="https://api.openweathermap.org/data/2.5/weather?q="+cityName+"&appid="+ apiKey+"&units=imperial"
+
+    fetch(url)
+    .then(function(response){
+        return response.json()
+    })
+    .then(function(currentData){
+        console.log(currentData)
+        titleEl.innerHTML=currentData.name + dayjs.unix(currentData.dt).format(" (MM/DD/YYYY)")+ "<img src='https://openweathermap.org/img/wn/"+ currentData.weather[0].icon+"@2x.png'>"
+    })
+
+
+    var forecastUrl="https://api.openweathermap.org/data/2.5/forecast?q="+cityName+"&appid="+apiKey+"&units=imperial"
+
+    fetch(forecastUrl)
+    .then(function(response){
+        return response.json()
+    })
+    .then(function(forecastData){
+        console.log(forecastData)
+        //grab every 12pm for each day for 5 days
+        var forecastArr=forecastData.list
+  
+        for (let i = 3,j=1; i < forecastArr.length; i=i+8,j++) {
+             console.log(forecastArr[i])
+               var cardTitle=document.getElementById("card-title"+j)
+               console.log("card-title"+j)
+               cardTitle.textContent=dayjs.unix(forecastArr[i].dt).format(" (MM/DD/YYYY)")
+               var temp=document.getElementById("temp"+j)
+
+               temp.textContent=forecastArr[i].main.temp
+        }
+
+    })
 }
 
-// Function to display 5-day forecast data
-function displayForecast(data) {
-  // Display the 5-day forecast data
-}
 
-// Function to update the search history
-function updateSearchHistory(city) {
-  // Add the city to the search history section
-  // Save the updated search history to localStorage
-}
-
-// Function to handle form submission
-async function handleFormSubmit(event) {
-  event.preventDefault();
-  const city = cityInput.value.trim();
-
-  if (city === '') return;
-
-  try {
-    const weatherData = await getWeatherData(city);
-
-    // Display the current weather data and 5-day forecast data
-    displayCurrentWeather(weatherData);
-    displayForecast(weatherData);
-
-    // Update the search history and localStorage
-    updateSearchHistory(city);
-  } catch (error) {
-    console.error('Error fetching weather data:', error);
-  }
-}
-
-// Function to handle search history item clicks
-function handleSearchHistoryClick(event) {
-  const clickedCity = event.target.textContent;
-  cityInput.value = clickedCity;
-  cityForm.dispatchEvent(new Event('submit'));
-}
-
-// Add event listeners
-cityForm.addEventListener('submit', handleFormSubmit);
-searchHistorySection.addEventListener('click', handleSearchHistoryClick);
+searchBtn.addEventListener("click", searchCity)
