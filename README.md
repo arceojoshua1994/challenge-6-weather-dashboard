@@ -29,7 +29,9 @@ The Weather Dashboard is a web application that allows users to see the weather 
 
 ## Installation
 
-To run the Weather Dashboard locally, follow these steps
+To run the Weather Dashboard locally, click the following link and follow the instructions below.
+
+https://arceojoshua1994.github.io/challenge-6-weather-dashboard/
 
 ## Usage
 
