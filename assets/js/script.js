@@ -97,4 +97,17 @@ function updateSearchHistory(cityName) {
 
   // Append the new list item to the search history
   searchHistory.appendChild(li);
+
+  // Select all search history buttons
+const searchHistoryButtons = searchHistory.querySelectorAll("button");
+
+// Loop through the buttons and attach event listeners
+searchHistoryButtons.forEach((button) => {
+  button.addEventListener("click", function() {
+    const cityName = button.textContent.trim();
+    displayWeather(cityName);
+  });
+});
 }
+
+
